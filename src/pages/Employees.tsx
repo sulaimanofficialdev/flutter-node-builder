@@ -2,7 +2,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Users, MapPin, Mail, Phone } from "lucide-react";
+import { Search, Users, MapPin, Mail, Phone } from "lucide-react";
+import { AddEmployeeForm } from "@/components/forms";
 import { cn } from "@/lib/utils";
 
 const employees = [
@@ -86,10 +87,7 @@ const Employees = () => {
               Manage staff across Japan and Dubai operations
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Employee
-          </Button>
+          <AddEmployeeForm />
         </div>
 
         {/* Filters */}

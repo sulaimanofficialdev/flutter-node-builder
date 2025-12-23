@@ -2,7 +2,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Plus, Container, Ship, CheckCircle, Package, Camera, FileText } from "lucide-react";
+import { Container, Ship, CheckCircle, Package, Camera, FileText } from "lucide-react";
+import { AddContainerForm } from "@/components/forms";
 import { cn } from "@/lib/utils";
 
 const containers = [
@@ -95,10 +96,7 @@ const Containers = () => {
               Track shipments between Japan and Dubai
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            New Container
-          </Button>
+          <AddContainerForm />
         </div>
 
         {/* Container Grid */}

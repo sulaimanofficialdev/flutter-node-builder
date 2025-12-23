@@ -2,7 +2,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Filter, Package, Grid3X3, List } from "lucide-react";
+import { Search, Filter, Package, Grid3X3, List } from "lucide-react";
+import { AddInventoryForm } from "@/components/forms";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -89,10 +90,7 @@ const Inventory = () => {
               Manage spare parts across all locations
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Item
-          </Button>
+          <AddInventoryForm />
         </div>
 
         {/* Filters & View Toggle */}
