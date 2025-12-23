@@ -1,8 +1,9 @@
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Filter, Car, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, Filter, Car, MoreHorizontal } from "lucide-react";
+import { AddVehicleForm } from "@/components/forms";
 import {
   Table,
   TableBody,
@@ -91,10 +92,7 @@ const Vehicles = () => {
               Manage vehicle purchases and auction records
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Vehicle
-          </Button>
+          <AddVehicleForm />
         </div>
 
         {/* Filters */}

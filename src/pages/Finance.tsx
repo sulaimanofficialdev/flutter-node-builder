@@ -2,6 +2,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { AddTransactionForm } from "@/components/forms";
 import {
   Plus,
   DollarSign,
@@ -63,10 +64,7 @@ const Finance = () => {
               Track all financial activities and generate reports
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Transaction
-          </Button>
+          <AddTransactionForm />
         </div>
 
         {/* Summary Cards */}

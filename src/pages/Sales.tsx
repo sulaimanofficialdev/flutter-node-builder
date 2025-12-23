@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Search, ShoppingCart, Users, Gavel, DollarSign } from "lucide-react";
+import { Search, ShoppingCart, Users, Gavel, DollarSign, Plus } from "lucide-react";
+import { AddOrderForm, AddCustomerForm } from "@/components/forms";
 import {
   Table,
   TableBody,
@@ -90,10 +91,7 @@ const Sales = () => {
               Manage orders, customers, and Dubai auctions
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            New Order
-          </Button>
+          <AddOrderForm />
         </div>
 
         {/* Tabs */}

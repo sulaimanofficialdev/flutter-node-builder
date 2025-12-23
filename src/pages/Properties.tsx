@@ -1,7 +1,7 @@
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Building2, Home, MapPin, DollarSign, TrendingUp, TrendingDown } from "lucide-react";
+import { Building2, Home, MapPin, DollarSign, TrendingUp, TrendingDown } from "lucide-react";
+import { AddPropertyForm } from "@/components/forms";
 import { cn } from "@/lib/utils";
 
 const properties = [
@@ -73,10 +73,7 @@ const Properties = () => {
               Manage company properties and rental income
             </p>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Property
-          </Button>
+          <AddPropertyForm />
         </div>
 
         {/* Summary Cards */}
