@@ -22,6 +22,7 @@ const reports = [
     type: "Financial",
     lastGenerated: "Dec 20, 2024",
     frequency: "Weekly",
+    route: "/reports/container-profit-loss",
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ const reports = [
     type: "Sales",
     lastGenerated: "Dec 15, 2024",
     frequency: "Monthly",
+    route: "/reports/monthly-sales",
   },
   {
     id: 3,
@@ -40,6 +42,7 @@ const reports = [
     type: "Inventory",
     lastGenerated: "Dec 18, 2024",
     frequency: "Weekly",
+    route: "/reports/inventory-valuation",
   },
   {
     id: 4,
@@ -49,6 +52,7 @@ const reports = [
     type: "HR",
     lastGenerated: "Dec 19, 2024",
     frequency: "Monthly",
+    route: "/reports/employee-expense",
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ const reports = [
     type: "Property",
     lastGenerated: "Dec 17, 2024",
     frequency: "Monthly",
+    route: "/reports/property-income",
   },
   {
     id: 6,
@@ -67,6 +72,7 @@ const reports = [
     type: "Financial",
     lastGenerated: "Dec 20, 2024",
     frequency: "Daily",
+    route: "/reports/financial-summary",
   },
 ];
 
