@@ -14,6 +14,14 @@ import Finance from "./pages/Finance";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import {
+  ContainerProfitLossReport,
+  MonthlySalesReport,
+  InventoryValuationReport,
+  EmployeeExpenseReport,
+  PropertyIncomeReport,
+  FinancialSummaryReport,
+} from "./pages/reports";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +41,12 @@ const App = () => (
           <Route path="/properties" element={<Properties />} />
           <Route path="/finance" element={<Finance />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/reports/container-profit-loss" element={<ContainerProfitLossReport />} />
+          <Route path="/reports/monthly-sales" element={<MonthlySalesReport />} />
+          <Route path="/reports/inventory-valuation" element={<InventoryValuationReport />} />
+          <Route path="/reports/employee-expense" element={<EmployeeExpenseReport />} />
+          <Route path="/reports/property-income" element={<PropertyIncomeReport />} />
+          <Route path="/reports/financial-summary" element={<FinancialSummaryReport />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
