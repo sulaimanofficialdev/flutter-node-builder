@@ -12,7 +12,7 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { useNavigate } from "react-router-dom";
 const reports = [
   {
     id: 1,
@@ -85,6 +85,8 @@ const typeColors = {
 };
 
 const Reports = () => {
+  const navigate = useNavigate();
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -185,7 +187,12 @@ const Reports = () => {
               </div>
 
               <div className="flex gap-2">
-                <Button size="sm" variant="secondary" className="flex-1">
+                <Button 
+                  size="sm" 
+                  variant="secondary" 
+                  className="flex-1"
+                  onClick={() => navigate(report.route)}
+                >
                   View
                 </Button>
                 <Button size="sm" className="flex-1 gap-2">
