@@ -28,6 +28,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line } from "recharts";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const monthlyChartData = [
   { week: "Week 1", auctions: 12500, direct: 8200 },
@@ -316,6 +319,7 @@ const MonthlySalesReport = () => {
                 <TableHead>Type</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -353,6 +357,46 @@ const MonthlySalesReport = () => {
                     >
                       {sale.status}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={sale.id}
+                      itemName={`Order for ${sale.customer}`}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Order ID" value={sale.id} />
+                          <DetailField label="Date" value={sale.date} />
+                          <DetailField label="Customer" value={sale.customer} />
+                          <DetailField label="Type" value={sale.type} />
+                          <DetailField label="Amount" value={`$${sale.amount.toLocaleString()}`} />
+                          <DetailField label="Status" value={sale.status} />
+                          <DetailField label="Items" value={sale.items} className="col-span-2" />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Date</Label>
+                            <Input type="date" defaultValue={sale.date} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Customer</Label>
+                            <Input defaultValue={sale.customer} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Amount</Label>
+                            <Input type="number" defaultValue={sale.amount} />
+                          </div>
+                          <div className="space-y-2 col-span-2">
+                            <Label>Items</Label>
+                            <Input defaultValue={sale.items} />
+                          </div>
+                        </div>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ))}

@@ -33,6 +33,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const employeeData = [
   {
@@ -398,6 +401,7 @@ const EmployeeExpenseReport = () => {
                 <TableHead className="text-right">Bonus</TableHead>
                 <TableHead className="text-right">Deductions</TableHead>
                 <TableHead className="text-right">Net Pay</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -434,6 +438,57 @@ const EmployeeExpenseReport = () => {
                   <TableCell className="text-right font-semibold">
                     ${emp.netPay.toLocaleString()}
                   </TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={emp.id}
+                      itemName={emp.name}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Employee ID" value={emp.id} />
+                          <DetailField label="Name" value={emp.name} />
+                          <DetailField label="Role" value={emp.role} />
+                          <DetailField label="Region" value={emp.region} />
+                          <DetailField label="Department" value={emp.department} />
+                          <DetailField label="Base Salary" value={`$${emp.salary.toLocaleString()}`} />
+                          <DetailField label="Allowances" value={`+$${emp.allowances.toLocaleString()}`} />
+                          <DetailField label="Bonus" value={`+$${emp.bonus.toLocaleString()}`} />
+                          <DetailField label="Deductions" value={`-$${emp.deductions.toLocaleString()}`} />
+                          <DetailField label="Net Pay" value={`$${emp.netPay.toLocaleString()}`} />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Name</Label>
+                            <Input defaultValue={emp.name} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Role</Label>
+                            <Input defaultValue={emp.role} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Salary</Label>
+                            <Input type="number" defaultValue={emp.salary} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Allowances</Label>
+                            <Input type="number" defaultValue={emp.allowances} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Bonus</Label>
+                            <Input type="number" defaultValue={emp.bonus} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Deductions</Label>
+                            <Input type="number" defaultValue={emp.deductions} />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
               {/* Totals Row */}
@@ -454,6 +509,7 @@ const EmployeeExpenseReport = () => {
                 <TableCell className="text-right">
                   ${totals.netPay.toLocaleString()}
                 </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableBody>
           </Table>

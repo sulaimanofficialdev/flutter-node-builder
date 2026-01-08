@@ -33,6 +33,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const propertyData = [
   {
@@ -379,6 +382,7 @@ const PropertyIncomeReport = () => {
                 <TableHead className="text-right">Net Income</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Lease End</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -434,6 +438,58 @@ const PropertyIncomeReport = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{prop.leaseEnd}</TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={prop.id}
+                      itemName={prop.name}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Property ID" value={prop.id} />
+                          <DetailField label="Name" value={prop.name} />
+                          <DetailField label="Type" value={prop.type} />
+                          <DetailField label="Location" value={prop.location} />
+                          <DetailField label="Tenant" value={prop.tenant} />
+                          <DetailField label="Monthly Rent" value={prop.monthlyRent > 0 ? `$${prop.monthlyRent.toLocaleString()}` : "—"} />
+                          <DetailField label="Maintenance" value={`-$${prop.maintenanceCost.toLocaleString()}`} />
+                          <DetailField label="Utilities" value={`-$${prop.utilityCost.toLocaleString()}`} />
+                          <DetailField label="Net Income" value={`${prop.netIncome >= 0 ? '+' : ''}$${prop.netIncome.toLocaleString()}`} />
+                          <DetailField label="Status" value={prop.status} />
+                          <DetailField label="Lease End" value={prop.leaseEnd} />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Name</Label>
+                            <Input defaultValue={prop.name} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Tenant</Label>
+                            <Input defaultValue={prop.tenant} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Monthly Rent</Label>
+                            <Input type="number" defaultValue={prop.monthlyRent} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Maintenance Cost</Label>
+                            <Input type="number" defaultValue={prop.maintenanceCost} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Utility Cost</Label>
+                            <Input type="number" defaultValue={prop.utilityCost} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Lease End Date</Label>
+                            <Input defaultValue={prop.leaseEnd} />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
               {/* Totals Row */}
@@ -456,7 +512,7 @@ const PropertyIncomeReport = () => {
                   {totals.netIncome >= 0 ? "+" : ""}$
                   {totals.netIncome.toLocaleString()}
                 </TableCell>
-                <TableCell colSpan={2}></TableCell>
+                <TableCell colSpan={3}></TableCell>
               </TableRow>
             </TableBody>
           </Table>

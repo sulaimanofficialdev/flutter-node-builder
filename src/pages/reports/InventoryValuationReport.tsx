@@ -28,6 +28,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const inventoryData = [
   {
@@ -355,6 +358,7 @@ const InventoryValuationReport = () => {
                 <TableHead className="text-right">Total Value</TableHead>
                 <TableHead>Condition</TableHead>
                 <TableHead className="text-center">Age (Days)</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -411,6 +415,49 @@ const InventoryValuationReport = () => {
                     >
                       {item.ageInDays}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={item.id}
+                      itemName={item.partName}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Inventory ID" value={item.id} />
+                          <DetailField label="Part Name" value={item.partName} />
+                          <DetailField label="Category" value={item.category} />
+                          <DetailField label="Location" value={item.location} />
+                          <DetailField label="Quantity" value={item.quantity} />
+                          <DetailField label="Unit Cost" value={`$${item.unitCost.toLocaleString()}`} />
+                          <DetailField label="Market Value" value={`$${item.marketValue.toLocaleString()}`} />
+                          <DetailField label="Total Value" value={`$${(item.marketValue * item.quantity).toLocaleString()}`} />
+                          <DetailField label="Condition" value={item.condition} />
+                          <DetailField label="Age in Days" value={item.ageInDays} />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2 col-span-2">
+                            <Label>Part Name</Label>
+                            <Input defaultValue={item.partName} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Quantity</Label>
+                            <Input type="number" defaultValue={item.quantity} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Unit Cost</Label>
+                            <Input type="number" defaultValue={item.unitCost} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Market Value</Label>
+                            <Input type="number" defaultValue={item.marketValue} />
+                          </div>
+                        </div>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ))}

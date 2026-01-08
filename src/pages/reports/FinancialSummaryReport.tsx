@@ -27,6 +27,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, AreaChart, Area } from "recharts";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const cashFlowData = [
   { date: "Dec 1", inflow: 12500, outflow: 8200, balance: 45300 },
@@ -383,6 +386,7 @@ const FinancialSummaryReport = () => {
                 <TableHead>Category</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -413,6 +417,41 @@ const FinancialSummaryReport = () => {
                   >
                     {txn.type === "Income" ? "+" : "-"}$
                     {txn.amount.toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={txn.id}
+                      itemName={txn.description}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Transaction ID" value={txn.id} />
+                          <DetailField label="Date" value={txn.date} />
+                          <DetailField label="Description" value={txn.description} />
+                          <DetailField label="Category" value={txn.category} />
+                          <DetailField label="Type" value={txn.type} />
+                          <DetailField label="Amount" value={`${txn.type === "Income" ? "+" : "-"}$${txn.amount.toLocaleString()}`} />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Date</Label>
+                            <Input type="date" defaultValue={txn.date} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Amount</Label>
+                            <Input type="number" defaultValue={txn.amount} />
+                          </div>
+                          <div className="space-y-2 col-span-2">
+                            <Label>Description</Label>
+                            <Input defaultValue={txn.description} />
+                          </div>
+                        </div>
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               ))}
