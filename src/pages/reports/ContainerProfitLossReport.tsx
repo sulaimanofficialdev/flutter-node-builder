@@ -28,6 +28,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { ReportTableActions, DetailField } from "@/components/reports";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const containerData = [
   {
@@ -298,6 +301,7 @@ const ContainerProfitLossReport = () => {
                 <TableHead className="text-right">Unsold Value</TableHead>
                 <TableHead className="text-right">Profit/Loss</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead className="w-10">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -346,6 +350,59 @@ const ContainerProfitLossReport = () => {
                       {item.status}
                     </Badge>
                   </TableCell>
+                  <TableCell>
+                    <ReportTableActions
+                      itemId={item.id}
+                      itemName={`Container ${item.id}`}
+                      onViewDetail={() => {}}
+                      onEdit={() => {}}
+                      onDelete={() => {}}
+                      detailContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <DetailField label="Container ID" value={item.id} />
+                          <DetailField label="Status" value={item.status} />
+                          <DetailField label="Ship Date" value={item.shipDate} />
+                          <DetailField label="Arrival Date" value={item.arrivalDate} />
+                          <DetailField label="Total Cars" value={item.totalCars} />
+                          <DetailField label="Purchase Cost" value={`$${item.purchaseCost.toLocaleString()}`} />
+                          <DetailField label="Shipping Cost" value={`$${item.shippingCost.toLocaleString()}`} />
+                          <DetailField label="Customs Duty" value={`$${item.customsDuty.toLocaleString()}`} />
+                          <DetailField label="Other Expenses" value={`$${item.otherExpenses.toLocaleString()}`} />
+                          <DetailField label="Total Sales" value={`$${item.totalSales.toLocaleString()}`} />
+                          <DetailField label="Unsold Value" value={`$${item.unsoldValue.toLocaleString()}`} />
+                          <DetailField label="Net Profit/Loss" value={`${item.profit >= 0 ? '+' : ''}$${item.profit.toLocaleString()}`} className={item.profit >= 0 ? "text-success" : "text-destructive"} />
+                        </div>
+                      }
+                      editContent={
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Ship Date</Label>
+                            <Input type="date" defaultValue={item.shipDate} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Arrival Date</Label>
+                            <Input type="date" defaultValue={item.arrivalDate} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Total Cars</Label>
+                            <Input type="number" defaultValue={item.totalCars} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Purchase Cost</Label>
+                            <Input type="number" defaultValue={item.purchaseCost} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Shipping Cost</Label>
+                            <Input type="number" defaultValue={item.shippingCost} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Customs Duty</Label>
+                            <Input type="number" defaultValue={item.customsDuty} />
+                          </div>
+                        </div>
+                      }
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
               {/* Totals Row */}
@@ -379,6 +436,7 @@ const ContainerProfitLossReport = () => {
                 >
                   {totals.profit >= 0 ? "+" : ""}${totals.profit.toLocaleString()}
                 </TableCell>
+                <TableCell></TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableBody>
