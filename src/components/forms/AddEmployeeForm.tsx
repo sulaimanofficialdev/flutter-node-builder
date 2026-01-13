@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Users } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Users, Loader2 } from "lucide-react";
+import { employeeApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddEmployeeFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddEmployeeForm = ({ trigger }: AddEmployeeFormProps) => {
+const AddEmployeeForm = ({ trigger, onSuccess }: AddEmployeeFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -42,24 +44,45 @@ const AddEmployeeForm = ({ trigger }: AddEmployeeFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => employeeApi.create({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      position: data.role,
+      department: data.department,
+      location: data.region,
+      salary: parseFloat(data.salary),
+      hireDate: data.startDate,
+      address: data.address || null,
+      emergencyContact: data.emergencyContact || null,
+      notes: data.notes || null,
+      status: 'active',
+    }),
+    successMessage: 'Employee added successfully!',
+    invalidateQueries: ['employees'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        department: "",
+        region: "",
+        salary: "",
+        startDate: "",
+        address: "",
+        emergencyContact: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Employee data:", formData);
-    toast.success("Employee added successfully!");
-    setOpen(false);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      role: "",
-      department: "",
-      region: "",
-      salary: "",
-      startDate: "",
-      address: "",
-      emergencyContact: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -227,10 +250,13 @@ const AddEmployeeForm = ({ trigger }: AddEmployeeFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Employee</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Employee
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

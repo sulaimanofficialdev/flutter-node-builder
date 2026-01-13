@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Users } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Users, Loader2 } from "lucide-react";
+import { customerApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddCustomerFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddCustomerForm = ({ trigger }: AddCustomerFormProps) => {
+const AddCustomerForm = ({ trigger, onSuccess }: AddCustomerFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     companyName: "",
@@ -42,24 +44,46 @@ const AddCustomerForm = ({ trigger }: AddCustomerFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => customerApi.create({
+      name: data.contactPerson,
+      company: data.companyName,
+      email: data.email,
+      phone: data.phone,
+      address: data.address || null,
+      city: data.city || null,
+      country: data.country || null,
+      taxId: data.taxId || null,
+      paymentTerms: data.paymentTerms || null,
+      creditLimit: data.creditLimit ? parseFloat(data.creditLimit) : 0,
+      notes: data.notes || null,
+      type: 'buyer',
+      isActive: true,
+    }),
+    successMessage: 'Customer added successfully!',
+    invalidateQueries: ['customers'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        companyName: "",
+        contactPerson: "",
+        email: "",
+        phone: "",
+        address: "",
+        city: "",
+        country: "",
+        taxId: "",
+        paymentTerms: "",
+        creditLimit: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Customer data:", formData);
-    toast.success("Customer added successfully!");
-    setOpen(false);
-    setFormData({
-      companyName: "",
-      contactPerson: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      country: "",
-      taxId: "",
-      paymentTerms: "",
-      creditLimit: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -228,10 +252,13 @@ const AddCustomerForm = ({ trigger }: AddCustomerFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Customer</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Customer
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
