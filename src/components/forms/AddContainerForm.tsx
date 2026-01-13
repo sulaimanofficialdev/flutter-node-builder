@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Container } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Container, Loader2 } from "lucide-react";
+import { containerApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddContainerFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddContainerForm = ({ trigger }: AddContainerFormProps) => {
+const AddContainerForm = ({ trigger, onSuccess }: AddContainerFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     containerId: "",
@@ -40,22 +42,41 @@ const AddContainerForm = ({ trigger }: AddContainerFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => containerApi.create({
+      containerNumber: data.containerId,
+      originPort: data.origin,
+      destinationPort: data.destination,
+      shippingLine: data.shippingLine || null,
+      bookingDate: data.bookingDate || null,
+      departureDate: data.estimatedDeparture || null,
+      arrivalDate: data.estimatedArrival || null,
+      containerType: data.containerType,
+      notes: data.notes || null,
+      status: 'loading',
+    }),
+    successMessage: 'Container created successfully!',
+    invalidateQueries: ['containers'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        containerId: "",
+        origin: "",
+        destination: "",
+        shippingLine: "",
+        bookingDate: "",
+        estimatedDeparture: "",
+        estimatedArrival: "",
+        containerType: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Container data:", formData);
-    toast.success("Container created successfully!");
-    setOpen(false);
-    setFormData({
-      containerId: "",
-      origin: "",
-      destination: "",
-      shippingLine: "",
-      bookingDate: "",
-      estimatedDeparture: "",
-      estimatedArrival: "",
-      containerType: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -212,10 +233,13 @@ const AddContainerForm = ({ trigger }: AddContainerFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Create Container</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Create Container
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

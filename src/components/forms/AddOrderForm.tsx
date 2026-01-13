@@ -19,8 +19,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, ShoppingCart, X } from "lucide-react";
+import { Plus, ShoppingCart, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { orderApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface OrderItem {
   id: string;
@@ -31,9 +33,10 @@ interface OrderItem {
 
 interface AddOrderFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddOrderForm = ({ trigger }: AddOrderFormProps) => {
+const AddOrderForm = ({ trigger, onSuccess }: AddOrderFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     customer: "",
@@ -64,23 +67,46 @@ const AddOrderForm = ({ trigger }: AddOrderFormProps) => {
     0
   );
 
+  const mutation = useApiMutation({
+    mutationFn: (data: { formData: typeof formData; items: OrderItem[]; total: number }) => 
+      orderApi.create({
+        customerId: data.formData.customer, // This would be a real customer ID from API
+        orderDate: data.formData.orderDate,
+        paymentMethod: data.formData.paymentMethod || null,
+        paymentStatus: data.formData.paymentStatus || 'pending',
+        notes: data.formData.notes || null,
+        totalAmount: data.total,
+        items: data.items.map(item => ({
+          description: item.name,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          totalPrice: item.quantity * item.price,
+        })),
+        status: 'pending',
+      }),
+    successMessage: 'Order created successfully!',
+    invalidateQueries: ['orders'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        customer: "",
+        orderDate: "",
+        paymentMethod: "",
+        paymentStatus: "",
+        notes: "",
+      });
+      setOrderItems([]);
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (orderItems.length === 0) {
       toast.error("Please add at least one item to the order");
       return;
     }
-    console.log("Order data:", { ...formData, items: orderItems, total: totalAmount });
-    toast.success("Order created successfully!");
-    setOpen(false);
-    setFormData({
-      customer: "",
-      orderDate: "",
-      paymentMethod: "",
-      paymentStatus: "",
-      notes: "",
-    });
-    setOrderItems([]);
+    mutation.mutate({ formData, items: orderItems, total: totalAmount });
   };
 
   return (
@@ -262,10 +288,13 @@ const AddOrderForm = ({ trigger }: AddOrderFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Create Order</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Create Order
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

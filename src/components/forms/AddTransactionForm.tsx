@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, DollarSign } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, DollarSign, Loader2 } from "lucide-react";
+import { transactionApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddTransactionFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddTransactionForm = ({ trigger }: AddTransactionFormProps) => {
+const AddTransactionForm = ({ trigger, onSuccess }: AddTransactionFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     type: "",
@@ -39,21 +41,39 @@ const AddTransactionForm = ({ trigger }: AddTransactionFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => transactionApi.create({
+      type: data.type,
+      category: data.category,
+      amount: parseFloat(data.amount),
+      date: data.date,
+      description: data.description,
+      paymentMethod: data.paymentMethod || null,
+      referenceNumber: data.reference || null,
+      notes: data.notes || null,
+      status: 'completed',
+    }),
+    successMessage: 'Transaction added successfully!',
+    invalidateQueries: ['transactions'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        type: "",
+        category: "",
+        amount: "",
+        date: "",
+        description: "",
+        paymentMethod: "",
+        reference: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Transaction data:", formData);
-    toast.success("Transaction added successfully!");
-    setOpen(false);
-    setFormData({
-      type: "",
-      category: "",
-      amount: "",
-      date: "",
-      description: "",
-      paymentMethod: "",
-      reference: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   const incomeCategories = [
@@ -214,10 +234,13 @@ const AddTransactionForm = ({ trigger }: AddTransactionFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Transaction</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Transaction
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

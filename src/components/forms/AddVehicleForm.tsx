@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Car } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Car, Loader2 } from "lucide-react";
+import { vehicleApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddVehicleFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddVehicleForm = ({ trigger }: AddVehicleFormProps) => {
+const AddVehicleForm = ({ trigger, onSuccess }: AddVehicleFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,23 +43,43 @@ const AddVehicleForm = ({ trigger }: AddVehicleFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => vehicleApi.create({
+      name: data.name,
+      year: parseInt(data.year),
+      auctionHouse: data.auction,
+      purchaseDate: data.purchaseDate,
+      purchasePrice: parseFloat(data.purchasePrice),
+      chassisNumber: data.chassisNumber || null,
+      engineNumber: data.engineNumber || null,
+      color: data.color || null,
+      mileage: data.mileage ? parseInt(data.mileage) : null,
+      notes: data.notes || null,
+      status: 'purchased',
+    }),
+    successMessage: 'Vehicle added successfully!',
+    invalidateQueries: ['vehicles'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        name: "",
+        year: "",
+        auction: "",
+        purchaseDate: "",
+        purchasePrice: "",
+        chassisNumber: "",
+        engineNumber: "",
+        color: "",
+        mileage: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Vehicle data:", formData);
-    toast.success("Vehicle added successfully!");
-    setOpen(false);
-    setFormData({
-      name: "",
-      year: "",
-      auction: "",
-      purchaseDate: "",
-      purchasePrice: "",
-      chassisNumber: "",
-      engineNumber: "",
-      color: "",
-      mileage: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -207,10 +229,13 @@ const AddVehicleForm = ({ trigger }: AddVehicleFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Vehicle</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Vehicle
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

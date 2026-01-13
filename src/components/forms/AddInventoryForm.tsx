@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Package } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Package, Loader2 } from "lucide-react";
+import { inventoryApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddInventoryFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddInventoryForm = ({ trigger }: AddInventoryFormProps) => {
+const AddInventoryForm = ({ trigger, onSuccess }: AddInventoryFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,23 +43,44 @@ const AddInventoryForm = ({ trigger }: AddInventoryFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => inventoryApi.create({
+      partName: data.name,
+      partNumber: data.partNumber || null,
+      category: data.category,
+      quantity: parseInt(data.quantity),
+      location: data.location,
+      costPrice: parseFloat(data.price),
+      sellingPrice: parseFloat(data.price) * 1.3, // 30% markup default
+      condition: data.condition,
+      sourceType: data.sourceType || null,
+      sourceId: data.sourceId || null,
+      notes: data.notes || null,
+      status: 'in_stock',
+    }),
+    successMessage: 'Inventory item added successfully!',
+    invalidateQueries: ['inventory'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        name: "",
+        category: "",
+        quantity: "",
+        location: "",
+        price: "",
+        condition: "",
+        sourceType: "",
+        sourceId: "",
+        partNumber: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Inventory data:", formData);
-    toast.success("Inventory item added successfully!");
-    setOpen(false);
-    setFormData({
-      name: "",
-      category: "",
-      quantity: "",
-      location: "",
-      price: "",
-      condition: "",
-      sourceType: "",
-      sourceId: "",
-      partNumber: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -229,10 +252,13 @@ const AddInventoryForm = ({ trigger }: AddInventoryFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Item</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Item
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

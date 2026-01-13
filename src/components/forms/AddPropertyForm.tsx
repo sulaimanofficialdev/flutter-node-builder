@@ -19,14 +19,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Building2 } from "lucide-react";
-import { toast } from "sonner";
+import { Plus, Building2, Loader2 } from "lucide-react";
+import { propertyApi } from "@/lib/api";
+import { useApiMutation } from "@/hooks/useApi";
 
 interface AddPropertyFormProps {
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
-const AddPropertyForm = ({ trigger }: AddPropertyFormProps) => {
+const AddPropertyForm = ({ trigger, onSuccess }: AddPropertyFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,23 +43,43 @@ const AddPropertyForm = ({ trigger }: AddPropertyFormProps) => {
     notes: "",
   });
 
+  const mutation = useApiMutation({
+    mutationFn: (data: typeof formData) => propertyApi.create({
+      name: data.name,
+      type: data.type,
+      address: data.address,
+      size: data.size ? parseInt(data.size) : null,
+      ownership: data.status,
+      propertyValue: data.value ? parseFloat(data.value) : null,
+      monthlyRent: data.monthlyRent ? parseFloat(data.monthlyRent) : null,
+      monthlyExpenses: data.monthlyExpense ? parseFloat(data.monthlyExpense) : null,
+      purchaseDate: data.purchaseDate || null,
+      notes: data.notes || null,
+      status: 'active',
+    }),
+    successMessage: 'Property added successfully!',
+    invalidateQueries: ['properties'],
+    onSuccess: () => {
+      setOpen(false);
+      setFormData({
+        name: "",
+        type: "",
+        address: "",
+        size: "",
+        status: "",
+        value: "",
+        monthlyRent: "",
+        monthlyExpense: "",
+        purchaseDate: "",
+        notes: "",
+      });
+      onSuccess?.();
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Property data:", formData);
-    toast.success("Property added successfully!");
-    setOpen(false);
-    setFormData({
-      name: "",
-      type: "",
-      address: "",
-      size: "",
-      status: "",
-      value: "",
-      monthlyRent: "",
-      monthlyExpense: "",
-      purchaseDate: "",
-      notes: "",
-    });
+    mutation.mutate(formData);
   };
 
   return (
@@ -209,10 +231,13 @@ const AddPropertyForm = ({ trigger }: AddPropertyFormProps) => {
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+            <Button type="button" variant="secondary" onClick={() => setOpen(false)} disabled={mutation.isPending}>
               Cancel
             </Button>
-            <Button type="submit">Add Property</Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Add Property
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
