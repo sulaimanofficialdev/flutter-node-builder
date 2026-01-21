@@ -1,8 +1,7 @@
-import { Bell, Search, User, LogOut, Settings } from "lucide-react";
+import { Bell, Search, User, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,13 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function TopBar() {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/auth');
-  };
 
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/80 backdrop-blur-sm">
@@ -49,8 +42,8 @@ export function TopBar() {
                   <User className="w-4 h-4 text-primary" />
                 </div>
                 <div className="text-left hidden md:block">
-                  <p className="text-sm font-medium text-foreground">{user?.name || 'User'}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{user?.role || 'Staff'}</p>
+                  <p className="text-sm font-medium text-foreground">Admin User</p>
+                  <p className="text-xs text-muted-foreground capitalize">Manager</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -64,11 +57,6 @@ export function TopBar() {
               <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
