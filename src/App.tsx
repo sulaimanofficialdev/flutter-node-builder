@@ -3,10 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import Vehicles from "./pages/Vehicles";
 import Containers from "./pages/Containers";
 import Inventory from "./pages/Inventory";
@@ -30,34 +27,31 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/vehicles" element={<ProtectedRoute><Vehicles /></ProtectedRoute>} />
-            <Route path="/containers" element={<ProtectedRoute><Containers /></ProtectedRoute>} />
-            <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-            <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
-            <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-            <Route path="/properties" element={<ProtectedRoute><Properties /></ProtectedRoute>} />
-            <Route path="/finance" element={<ProtectedRoute><Finance /></ProtectedRoute>} />
-            <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-            <Route path="/reports/container-profit-loss" element={<ProtectedRoute><ContainerProfitLossReport /></ProtectedRoute>} />
-            <Route path="/reports/monthly-sales" element={<ProtectedRoute><MonthlySalesReport /></ProtectedRoute>} />
-            <Route path="/reports/inventory-valuation" element={<ProtectedRoute><InventoryValuationReport /></ProtectedRoute>} />
-            <Route path="/reports/employee-expense" element={<ProtectedRoute><EmployeeExpenseReport /></ProtectedRoute>} />
-            <Route path="/reports/property-income" element={<ProtectedRoute><PropertyIncomeReport /></ProtectedRoute>} />
-            <Route path="/reports/financial-summary" element={<ProtectedRoute><FinancialSummaryReport /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/containers" element={<Containers />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/sales" element={<Sales />} />
+          <Route path="/employees" element={<Employees />} />
+          <Route path="/properties" element={<Properties />} />
+          <Route path="/finance" element={<Finance />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports/container-profit-loss" element={<ContainerProfitLossReport />} />
+          <Route path="/reports/monthly-sales" element={<MonthlySalesReport />} />
+          <Route path="/reports/inventory-valuation" element={<InventoryValuationReport />} />
+          <Route path="/reports/employee-expense" element={<EmployeeExpenseReport />} />
+          <Route path="/reports/property-income" element={<PropertyIncomeReport />} />
+          <Route path="/reports/financial-summary" element={<FinancialSummaryReport />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
